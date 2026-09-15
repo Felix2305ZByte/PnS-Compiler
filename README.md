@@ -1,26 +1,38 @@
-# 🚀 PnS++ Language Compiler v0.1.0-1 (Genesis-P)
+# 🚀 PnS++ Language (Probabilistic & Statistical Language)
 
-> PnS++ is a high-performance probabilistic simulation and statistical language—featuring Python-like simplicity while delivering blazing-fast data processing speeds approaching those of C++.
+**PnS++** là một ngôn ngữ lập trình chuyên biệt (Domain-Specific Language - DSL) hiệu năng cao được thiết kế dành riêng cho mô phỏng xác suất (Monte Carlo), phân tích thống kê và tính toán mảng dữ liệu quy mô lớn. 
 
-PnS++ (Probabilistic & Statistical Language) is a Domain-Specific Language (DSL) designed for Monte Carlo simulations, statistical analysis, and parallel array computing. The compiler utilizes the Lark EBNF Parser to construct the AST and employs Numba JIT (LLVM Compiler Framework) as the backend to automatically enable Auto-SIMD and multi-threaded OpenMP execution.
-
----
-
-## ⚡ Real-world Performance (Benchmark: 10M Samples)
-
-| Processing Stage | Number of Elements | Execution Time | Notes |
-| :--- | :--- | :--- | :--- |
-| **Data Generation (`norm`)** | 10,000,000 | **~50.24 ms** | Parallel random array initialization |
-| **SIMD Vector Filter (`> 2.0`)** | 10,000,000 | **6.86 ms** | RAM bandwidth optimization |
-| **Native Mean Calculation** | 10,000,000 | **1.38 ms** | CPU register integration |
-| **🚀 Total Computation Time** | **10,000,000** | **8.24 ms** | **Performance approaching C/C++** |
+PnS++ giải quyết bài toán giao thoa giữa **cú pháp tối giản của Python** và **tốc độ thực thi tiệm cận C/C++**, giúp các nhà nghiên cứu và kỹ sư dữ liệu biểu diễn bài toán phức tạp chỉ trong vài dòng code mà vẫn đạt hiệu năng xử lý tối đa của phần cứng.
 
 ---
 
-## 💻 Syntax Example (`demo.pspp`)
+## 🌟 Triết lý thiết kế (Core Design Principles)
 
-```pspp
-data = @stats.norm(mean=0.0, std=1.0, n=10000000)
-filtered = data > 2.0
-result = @stats.mean(filtered)
-out result
+* **Expressive & Minimalist Syntax:** Cú pháp hướng khai báo (declarative) giúp biểu diễn các phép toán mảng và phân phối thống kê một cách tự nhiên.
+* **JIT Native Execution:** Không sử dụng Python Interpreter cho vòng lặp tính toán. Mã nguồn PnS++ được phân tích AST và hạ cấp (lower) trực tiếp xuống mã máy Native (x86_64) thông qua backend LLVM JIT Compiler.
+* **Auto-Hardware Acceleration:** Tự động kích hoạt Vectorization (SIMD) và tính toán đa luồng (OpenMP) mà người dùng không cần quản lý bộ nhớ hay viết code song song thủ công.
+
+---
+
+## 🏗️ Kiến trúc Compiler (Architecture Overview)
+
+```text
+[ File Mã Nguồn (.pspp) ]
+          │
+          ▼
+   ┌──────────────┐
+   │ Lark Parser  │  ==> Phân tích cú pháp EBNF & dựng cây AST
+   └──────┬───────┘
+          │
+          ▼
+   ┌──────────────┐
+   │ AST Codegen  │  ==> Tự động phân giải Module (@stats, @math) & sinh IR
+   └──────┬───────┘
+          │
+          ▼
+   ┌──────────────┐
+   │ Numba JIT    │  ==> LLVM Optimization: Auto-SIMD / OpenMP Parallel
+   └──────┬───────┘
+          │
+          ▼
+ [ Native Machine Code ] (Thực thi siêu tốc trên CPU)
